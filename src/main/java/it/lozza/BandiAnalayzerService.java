@@ -1,10 +1,12 @@
 package it.lozza;
 
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.TextSearchOptions;
+import io.quarkus.mongodb.reactive.ReactiveMongoClient;
+import io.quarkus.mongodb.reactive.ReactiveMongoDatabase;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.Document;
 
@@ -18,49 +20,35 @@ import java.util.List;
 @ApplicationScoped
 public class BandiAnalayzerService {
     @Inject
-    MongoClient mongoClient;
+    ReactiveMongoClient mongoClient;
 
     @Inject
     @ConfigProperty(name = "quarkus.mongodb.database")
     private String databaseName;
 
-    public List<Bando> list(String collectionName) {
+    public Uni<List<Bando>> list(String collectionName) {
         List<Bando> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase(this.databaseName);
-        MongoCursor<Document> cursor = database.getCollection(collectionName).find().iterator();
-        try {
-            while (cursor.hasNext()) {
-                Document document = cursor.next();
-                Bando bando = new Bando();
-                bando.setTitle(document.getString("title"));
-                bando.setDescription(document.getString("description"));
-                list.add(bando);
-            }
-        } finally {
-            cursor.close();
-        }
-        return list;
+        ReactiveMongoDatabase database = mongoClient.getDatabase(this.databaseName);
+        return database.getCollection(collectionName).find().map(doc -> {
+            Bando bando = new Bando();
+            bando.setTitle(doc.getString("title"));
+            bando.setDescription(doc.getString("description"));
+            return bando;
+        }).collect().asList();
     }
 
-    public List<Bando> search(String collectionName, String queryText) {
+    public Uni<List<Bando>> search(String collectionName, String queryText) {
         List<Bando> list = new ArrayList<>();
-        MongoDatabase database = mongoClient.getDatabase(this.databaseName);
+        ReactiveMongoDatabase database = mongoClient.getDatabase(this.databaseName);
 
         TextSearchOptions options = new TextSearchOptions().caseSensitive(false);
         Bson filter = Filters.text(queryText, options);
-        MongoCursor<Document> cursor = database.getCollection(collectionName).find(filter).iterator();
 
-        try {
-            while (cursor.hasNext()) {
-                Document document = cursor.next();
-                Bando bando = new Bando();
-                bando.setTitle(document.getString("title"));
-                bando.setDescription(document.getString("description"));
-                list.add(bando);
-            }
-        } finally {
-            cursor.close();
-        }
-        return list;
+        return database.getCollection(collectionName).find(filter).map(doc -> {
+            Bando bando = new Bando();
+            bando.setTitle(doc.getString("title"));
+            bando.setDescription(doc.getString("description"));
+            return bando;
+        }).collect().asList();
     }
 }

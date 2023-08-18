@@ -1,5 +1,6 @@
 package it.lozza;
 
+import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -15,8 +16,7 @@ public class BandiAnalayzerResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/search/{value}")
-    public List<Bando> search(@PathParam("value") String value) {
-        List<Bando> list = bandiAnalayzerService.search("bandi", value);
-        return list;
+    public Uni<List<Bando>> search(@PathParam("value") String value) {
+        return bandiAnalayzerService.search("bandi", value);
     }
 }
