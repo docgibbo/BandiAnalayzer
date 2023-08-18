@@ -1,6 +1,10 @@
 package it.lozza;
 
-public class Bando{
+import java.io.Serializable;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class Bando implements Serializable {
 
     private String title;
     private String description;
@@ -67,6 +71,16 @@ public class Bando{
 
     public String getTipologia() {
         return this.tipologia;
+    }
+
+    public String toString(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return super.toString();
+        }
     }
 
 }

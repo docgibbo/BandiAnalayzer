@@ -13,11 +13,10 @@ public class BandiAnalayzerResource {
     @Inject BandiAnalayzerService bandiAnalayzerService;
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/search/{value}")
-    public String test(@PathParam("value") String value) {
-        List<Bando> list = bandiAnalayzerService.list();
-        System.out.println(list);
-        return "APPLICATION_JSON"+value;
+    public List<Bando> search(@PathParam("value") String value) {
+        List<Bando> list = bandiAnalayzerService.search("bandi", value);
+        return list;
     }
 }
