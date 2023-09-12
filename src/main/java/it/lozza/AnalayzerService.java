@@ -1,14 +1,11 @@
 package it.lozza;
 
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.TextSearchOptions;
 import io.quarkus.mongodb.reactive.ReactiveMongoClient;
 import io.quarkus.mongodb.reactive.ReactiveMongoDatabase;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.bson.Document;
 
 import jakarta.inject.Inject;
 import org.bson.conversions.Bson;
@@ -18,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
-public class BandiAnalayzerService {
+public class AnalayzerService {
     @Inject
     ReactiveMongoClient mongoClient;
 

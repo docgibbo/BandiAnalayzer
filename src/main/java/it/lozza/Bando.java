@@ -1,6 +1,8 @@
 package it.lozza;
 
 import java.io.Serializable;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +17,24 @@ public class Bando implements Serializable {
     private String enteErogatore;
 
     public Bando() {
+    }
+
+    public Bando(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            Map<String, Object> map = mapper.readValue(json, Map.class);
+            this.title = (map.get("title") != null) ? map.get("title").toString() : "";
+            this.description = (map.get("description") != null) ? map.get("description").toString() : "";
+            this.dataChiusura = (map.get("dataChiusura") != null) ? map.get("dataChiusura").toString() : "";
+            this.stato = (map.get("stato") != null) ? map.get("stato").toString() : "";
+            this.categoria = (map.get("categoria") != null) ? map.get("categoria").toString() : "";
+            this.tipologia = (map.get("tipologia") != null) ? map.get("tipologia").toString() : "";
+            this.enteErogatore = (map.get("enteErogatore") != null) ? map.get("enteErogatore").toString() : "";
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        System.out.println(this.toString());
     }
 
     public void setTitle(String title) {
